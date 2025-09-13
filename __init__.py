@@ -1,33 +1,52 @@
-# This is a stub package designed to roughly emulate the _yaml
-# extension module, which previously existed as a standalone module
-# and has been moved into the `yaml` package namespace.
-# It does not perfectly mimic its old counterpart, but should get
-# close enough for anyone who's relying on it even when they shouldn't.
-import yaml
+#!/usr/bin/env python
 
-# in some circumstances, the yaml module we imoprted may be from a different version, so we need
-# to tread carefully when poking at it here (it may not have the attributes we expect)
-if not getattr(yaml, '__with_libyaml__', False):
-    from sys import version_info
+# Copyright 2021 The HuggingFace Team. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
-    exc = ModuleNotFoundError if version_info >= (3, 6) else ImportError
-    raise exc("No module named '_yaml'")
-else:
-    from yaml._yaml import *
-    import warnings
-    warnings.warn(
-        'The _yaml extension module is now located at yaml._yaml'
-        ' and its location is subject to change.  To use the'
-        ' LibYAML-based parser and emitter, import from `yaml`:'
-        ' `from yaml import CLoader as Loader, CDumper as Dumper`.',
-        DeprecationWarning
-    )
-    del warnings
-    # Don't `del yaml` here because yaml is actually an existing
-    # namespace member of _yaml.
+import argparse
 
-__name__ = '_yaml'
-# If the module is top-level (i.e. not a part of any specific package)
-# then the attribute should be set to ''.
-# https://docs.python.org/3.8/library/types.html
-__package__ = ''
+from .config import config_command_parser
+from .config_args import default_config_file, load_config_from_file  # noqa: F401
+from .default import default_command_parser
+from .update import update_command_parser
+
+
+def get_config_parser(subparsers=None):
+    parent_parser = argparse.ArgumentParser(add_help=False, allow_abbrev=False)
+    # The main config parser
+    config_parser = config_command_parser(subparsers)
+    # The subparser to add commands to
+    subcommands = config_parser.add_subparsers(title="subcommands", dest="subcommand")
+
+    # Then add other parsers with the parent parser
+    default_command_parser(subcommands, parents=[parent_parser])
+    update_command_parser(subcommands, parents=[parent_parser])
+
+    return config_parser
+
+
+def main():
+    config_parser = get_config_parser()
+    args = config_parser.parse_args()
+
+    if not hasattr(args, "func"):
+        config_parser.print_help()
+        exit(1)
+
+    # Run
+    args.func(args)
+
+
+if __name__ == "__main__":
+    main()
