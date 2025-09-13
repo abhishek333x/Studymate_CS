@@ -1,0 +1,19 @@
+# StudyMate Hub Output Instructions
+
+To see the output of your project:
+
+1. Run the backend (FastAPI):
+   uvicorn backend.main:app --reload
+   Visit http://127.0.0.1:8000/docs in your browser for API docs.
+
+2. Run the frontend (Streamlit):
+   streamlit run frontend/app.py
+   Your browser will open the dashboard (usually http://localhost:8501).
+
+3. Any output, errors, or logs will appear in your terminal or browser window.
+
+If you want to save output to a file, redirect terminal output like this:
+   uvicorn backend.main:app --reload > backend_output.txt 2>&1
+   streamlit run frontend/app.py > frontend_output.txt 2>&1
+
+Check backend_output.txt or frontend_output.txt for logs and results.

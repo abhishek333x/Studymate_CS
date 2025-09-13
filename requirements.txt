@@ -1,0 +1,34 @@
+fastapi
+uvicorn
+pillow
+pytesseract
+python-docx
+sentence-transformers
+faiss-cpu
+numpy
+PyMuPDF
+streamlit
+streamlit-option-menu
+requests
+langdetect
+networkx
+graphviz
+sqlite-utils
+python-dotenv
+
+# Frontend requirements
+streamlit
+streamlit-extras
+streamlit-camera-input-live
+streamlit-option-menu
+
+# TTS/Voice
+ibm-watson
+openai-whisper
+gtts
+elevenlabs
+
+# General
+numpy
+Pillow
+scikit-learn
